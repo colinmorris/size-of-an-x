@@ -1,0 +1,6 @@
+.ipynb_checkpoints/
+*.pyc
+*.csv
+*.tsv
+totalcounts*.txt
+googlebooks-eng-*
