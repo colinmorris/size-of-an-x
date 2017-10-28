@@ -1,3 +1,7 @@
+Looking at the changing frequencies of different size analogies in Google Books ngram data. 
+
+Code is pretty messy. Happy to explain/document it on request. If you're interested in extending/reusing some of this work, just drop me a line.
+
 Repro steps:
 
 - Download 'si' 4grams and 5grams files and unzip
