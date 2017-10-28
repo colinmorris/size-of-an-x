@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import numpy as np
 from collections import defaultdict
-from foo import *
+from special_cases import *
 import disambig
 import utils
 
