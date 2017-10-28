@@ -1,0 +1,13 @@
+size of an egg,size of a pigeon's + size of a pigeon egg,size of a goose's + size of a goose egg,size of a hen's + size of a hen egg
+
+size of an egg,size of a pigeon egg + size of a pigeon's,size of a hen egg + size of a hen's
+
+size of a quarter,size of a dime,size of a silver dollar,size of a shilling,size of a sixpence,size of a half-crown
+
+size of a football,size of a baseball,size of a basketball,size of a golf ball,size of a tennis ball
+
+size of a football,size of a baseball,size of a basketball,size of a golf ball,size of a tennis ball,size of a cricket ball
+
+(size of a football - size of a football field),size of a baseball,size of a basketball,size of a golf ball,size of a tennis ball,size of a cricket ball
+
+size of a pinhead,size of a pin's,size of a pin head

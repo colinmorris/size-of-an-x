@@ -4,8 +4,18 @@ import sys
 import numpy as np
 from collections import defaultdict
 from foo import *
+import disambig
+import utils
 
-CANONIZE = True
+# Whether to merge minor ortho variations described in foo.canonical_formers
+# Also merge adj + X -> X (see foo.jjs)
+CANONIZE = 1
+
+DISAMBIG = True
+
+NORMALIZE = 1
+
+CENSOR = 1
 
 # If true, measure number of distinct books each comparison appears in, rather 
 # than its total uses across books.
@@ -18,6 +28,8 @@ if len(sys.argv) > 1:
 else:
   FICTION = 0
 
+MIN_YEAR = 1800
+
 # Year thresholds
 THRESHES = [1900, 2000, 2100]
 if FICTION:
@@ -25,13 +37,14 @@ if FICTION:
   # >= 2000: 50% of fiction
   THRESHES = [1940, 2000, 2100]
 
-def make_row(yr_to_count, token):
+def make_row(yr_to_count, token, raw_ytc):
   assert len(yr_to_count), "Got no counts for token <{}>".format(token)
   years = yr_to_count.keys()
   counts = yr_to_count.values()
   # (Not really a valid calculation. Should include gap years at least.)
   variance = np.var(counts)
   total = sum(counts)
+  raw_total = sum(raw_ytc.values())
   first, last = min(years), max(years)
   maxcount = max(counts)
   modeyrs = [yr for (yr, count) in yr_to_count.iteritems() if count==maxcount]
@@ -55,6 +68,7 @@ def make_row(yr_to_count, token):
   return dict(token=token, total=total, mean_yr=mean_yr, median_yr=median_yr, first_yr=first, 
       last_yr=last, mode_yr=modeyrs[0], variance=variance,
       total_pre1900=total_pre1900, total_20c=total_20c, total_21c=total_21c,
+      annual_max=maxcount, raw_total=raw_total,
       )
 
 
@@ -75,6 +89,9 @@ for grams in (4, 5):
     phrase, yr, count, _books = line.split('\t')
     if COUNT_BOOKS:
       count = _books
+    yr, count = map(int, [yr, count])
+    if yr < MIN_YEAR:
+      continue
     # Let's just skip uppercase "Size of a...". Likely to be a book title or something.
     if phrase[0] == 'S':
       continue
@@ -94,7 +111,6 @@ for grams in (4, 5):
         pass
       else:
         continue
-    yr, count = map(int, [yr, count])
 
     token_to_year_to_count[token][yr] += count
 
@@ -133,10 +149,30 @@ for orig, renamed in renames.iteritems():
   ttytc[renamed] = counts
   del ttytc[orig]
 
+if DISAMBIG:
+  for phrase in disambig.disambig_phrase_to_fname:
+    disambig.disambig(phrase, ttytc)
+
+if CENSOR:
+  for token in verboten:
+    if token not in ttytc:
+      print "Missing censorable token <{}>".format(token)
+      continue
+    del ttytc[token]
+
+raw_ttytc = {}
+for token, ytc in ttytc.iteritems():
+  raw_ttytc[token] = ytc.copy()
+if NORMALIZE:
+  utils.normalize(ttytc)
+
 # Make the dataframe
-rows = [make_row(ytc, token) for (token, ytc) in ttytc.iteritems()]
+rows = [make_row(ytc, token, raw_ttytc[token]) for (token, ytc) in ttytc.iteritems()]
 
 #out_fname = '5grams.csv' if '5' in fname else '4grams.csv'
-out_fname = 'merged{}.csv'.format('_fiction' if FICTION else '')
+out_fname = 'merged{}{}.csv'.format(
+    '_fiction' if FICTION else '',
+    '_nocanon' if not CANONIZE else '',
+    )
 df = pd.DataFrame(rows)
 df.to_csv(out_fname, index=False)

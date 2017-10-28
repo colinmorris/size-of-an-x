@@ -5,6 +5,7 @@ Repro steps:
 - make_df.py on each of those tsv files to make csvs
 - merge_dfs.py
 - ipynb
+- also, downloaded "as" 5grams, grepped for "as a man 's X" and "as a grain of X" to asamans.tsv and asagrain.tsv. Which are used in disambig.py called by make_df2.py. 
 
 (Also, at some point did some manual editing of sizeof.tsv to put 'a hen' and 'an hen' next to each other...)
 
