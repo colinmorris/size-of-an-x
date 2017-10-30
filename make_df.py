@@ -41,8 +41,6 @@ def make_row(yr_to_count, token, raw_ytc):
   assert len(yr_to_count), "Got no counts for token <{}>".format(token)
   years = yr_to_count.keys()
   counts = yr_to_count.values()
-  # (Not really a valid calculation. Should include gap years at least.)
-  variance = np.var(counts)
   total = sum(counts)
   raw_total = sum(raw_ytc.values())
   first, last = min(years), max(years)
@@ -66,7 +64,7 @@ def make_row(yr_to_count, token, raw_ytc):
   total_21c = sum(count for (yr, count) in yr_to_count.iteritems() if y1 <= yr < y2)
 
   return dict(token=token, total=total, mean_yr=mean_yr, median_yr=median_yr, first_yr=first, 
-      last_yr=last, mode_yr=modeyrs[0], variance=variance,
+      last_yr=last, mode_yr=modeyrs[0],
       total_pre1900=total_pre1900, total_20c=total_20c, total_21c=total_21c,
       annual_max=maxcount, raw_total=raw_total,
       )
